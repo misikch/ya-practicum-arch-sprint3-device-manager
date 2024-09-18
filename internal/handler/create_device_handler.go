@@ -27,7 +27,7 @@ func (h *Handler) DevicesPost(ctx context.Context, req *api.DevicesPostReq) (api
 	}
 
 	return &api.Device{
-		DeviceID:     api.NewOptString(device.DeviceID),
+		DeviceId:     api.NewOptString(device.DeviceID),
 		DeviceType:   api.NewOptString(device.DeviceType),
 		SerialNumber: api.NewOptString(device.SerialNumber),
 		Status:       api.NewOptString(device.Status),

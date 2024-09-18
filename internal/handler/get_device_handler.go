@@ -25,7 +25,7 @@ func (h *Handler) DevicesDeviceIDGet(ctx context.Context, params api.DevicesDevi
 	}
 
 	return &api.Device{
-		DeviceID:     api.NewOptString(device.DeviceID),
+		DeviceId:     api.NewOptString(device.DeviceID),
 		DeviceType:   api.NewOptString(device.DeviceType),
 		SerialNumber: api.NewOptString(device.SerialNumber),
 		Status:       api.NewOptString(device.Status),

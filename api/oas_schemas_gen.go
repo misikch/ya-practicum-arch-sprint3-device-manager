@@ -4,15 +4,15 @@ package api
 
 // Ref: #/components/schemas/Device
 type Device struct {
-	DeviceID     OptString `json:"device_id"`
+	DeviceId     OptString `json:"deviceId"`
 	DeviceType   OptString `json:"deviceType"`
 	SerialNumber OptString `json:"serialNumber"`
 	Status       OptString `json:"status"`
 }
 
-// GetDeviceID returns the value of DeviceID.
-func (s *Device) GetDeviceID() OptString {
-	return s.DeviceID
+// GetDeviceId returns the value of DeviceId.
+func (s *Device) GetDeviceId() OptString {
+	return s.DeviceId
 }
 
 // GetDeviceType returns the value of DeviceType.
@@ -30,9 +30,9 @@ func (s *Device) GetStatus() OptString {
 	return s.Status
 }
 
-// SetDeviceID sets the value of DeviceID.
-func (s *Device) SetDeviceID(val OptString) {
-	s.DeviceID = val
+// SetDeviceId sets the value of DeviceId.
+func (s *Device) SetDeviceId(val OptString) {
+	s.DeviceId = val
 }
 
 // SetDeviceType sets the value of DeviceType.

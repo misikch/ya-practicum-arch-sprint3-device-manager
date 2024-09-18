@@ -17,9 +17,9 @@ func (s *Device) Encode(e *jx.Encoder) {
 // encodeFields encodes fields.
 func (s *Device) encodeFields(e *jx.Encoder) {
 	{
-		if s.DeviceID.Set {
-			e.FieldStart("device_id")
-			s.DeviceID.Encode(e)
+		if s.DeviceId.Set {
+			e.FieldStart("deviceId")
+			s.DeviceId.Encode(e)
 		}
 	}
 	{
@@ -43,7 +43,7 @@ func (s *Device) encodeFields(e *jx.Encoder) {
 }
 
 var jsonFieldsNameOfDevice = [4]string{
-	0: "device_id",
+	0: "deviceId",
 	1: "deviceType",
 	2: "serialNumber",
 	3: "status",
@@ -57,15 +57,15 @@ func (s *Device) Decode(d *jx.Decoder) error {
 
 	if err := d.ObjBytes(func(d *jx.Decoder, k []byte) error {
 		switch string(k) {
-		case "device_id":
+		case "deviceId":
 			if err := func() error {
-				s.DeviceID.Reset()
-				if err := s.DeviceID.Decode(d); err != nil {
+				s.DeviceId.Reset()
+				if err := s.DeviceId.Decode(d); err != nil {
 					return err
 				}
 				return nil
 			}(); err != nil {
-				return errors.Wrap(err, "decode field \"device_id\"")
+				return errors.Wrap(err, "decode field \"deviceId\"")
 			}
 		case "deviceType":
 			if err := func() error {

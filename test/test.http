@@ -4,12 +4,32 @@ Content-Type: application/json
 X-Source: test.http
 
 {
-  "serialNumber": "d-1-sn",
+  "serialNumber": "d-3-snn",
   "deviceType": "light",
   "status": "active"
 }
 
 ### get device info
-GET http://{{host}}/devices/66eb2ddd4b72c4f70a0955a4
+GET http://{{host}}/devices/4e8701b8-1628-448c-9f08-6301b09be92a
 Content-Type: application/json
 X-Source: test.http
+
+###
+### post device command
+POST http://{{host}}/devices/4e8701b8-1628-448c-9f08-6301b09be92a/commands
+Content-Type: application/json
+
+{
+  "command": "gates",
+  "value": "open"
+}
+
+###
+### update device status
+###
+PUT http://{{host}}/devices/4e8701b8-1628-448c-9f08-6301b09be92a/status
+Content-Type: application/json
+
+{
+  "status": "inactive"
+}

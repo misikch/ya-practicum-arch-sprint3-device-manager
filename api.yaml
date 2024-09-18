@@ -15,7 +15,7 @@ components:
     Device:
       type: object
       properties:
-        device_id:
+        deviceId:
           type: string
         deviceType:
           type: string

@@ -7,17 +7,15 @@ import (
 	"github.com/google/uuid"
 	"go.mongodb.org/mongo-driver/mongo"
 
-	"go.mongodb.org/mongo-driver/bson"
-	"go.mongodb.org/mongo-driver/bson/primitive"
-
 	"device-manager/internal/entity"
+	"go.mongodb.org/mongo-driver/bson"
 )
 
 // GetDevice получает информацию об устройстве по его device_id.
 func (s *Storage) GetDevice(ctx context.Context, deviceID string) (*entity.Device, error) {
 	collection := s.Database().Collection("devices")
 	var device entity.Device
-	err := collection.FindOne(ctx, bson.M{"device_id": deviceID}).Decode(&device)
+	err := collection.FindOne(ctx, bson.M{"deviceId": deviceID}).Decode(&device)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
@@ -35,7 +33,7 @@ func (s *Storage) GetDevice(ctx context.Context, deviceID string) (*entity.Devic
 func (s *Storage) GetDeviceBySerial(ctx context.Context, serialNumber string) (*entity.Device, error) {
 	collection := s.Database().Collection("devices")
 	var device entity.Device
-	err := collection.FindOne(ctx, bson.M{"serial_number": serialNumber}).Decode(&device)
+	err := collection.FindOne(ctx, bson.M{"serialNumber": serialNumber}).Decode(&device)
 	if err != nil {
 		if errors.Is(err, mongo.ErrNoDocuments) {
 			return nil, nil
@@ -54,7 +52,7 @@ func (s *Storage) UpdateDeviceStatus(ctx context.Context, deviceID string, statu
 	collection := s.Database().Collection("devices")
 	_, err := collection.UpdateOne(
 		ctx,
-		bson.M{"device_id": deviceID},
+		bson.M{"deviceId": deviceID},
 		bson.M{"$set": bson.M{"status": status}},
 	)
 	if err != nil {
@@ -94,14 +92,12 @@ func (s *Storage) AddDevice(ctx context.Context, deviceType string, serialNumber
 		Status:       status,
 	}
 
-	res, err := collection.InsertOne(ctx, device)
+	_, err := collection.InsertOne(ctx, device)
 	if err != nil {
 		s.logger.Errorf("Ошибка при добавлении устройства: %v", err)
 
 		return nil, err
 	}
-
-	device.DeviceID = res.InsertedID.(primitive.ObjectID).Hex()
 
 	return &device, nil
 }
