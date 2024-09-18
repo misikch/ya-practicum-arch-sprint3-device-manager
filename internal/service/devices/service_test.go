@@ -19,13 +19,6 @@ type TestCase struct {
 }
 
 func TestService_GetDeviceInfo(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockStorage := NewMockStorage(ctrl)
-	mockDatabus := NewMockDatabusProducer(ctrl)
-	service := NewService(mockStorage, mockDatabus)
-
 	tests := []TestCase{
 		{
 			name: "Device found",
@@ -71,6 +64,13 @@ func TestService_GetDeviceInfo(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			mockStorage := NewMockStorage(ctrl)
+			mockDatabus := NewMockDatabusProducer(ctrl)
+			service := NewService(mockStorage, mockDatabus)
+
 			tc.setup(mockStorage, mockDatabus)
 			err := tc.execute(service)
 			tc.check(t, err)
@@ -79,17 +79,11 @@ func TestService_GetDeviceInfo(t *testing.T) {
 }
 
 func TestService_CreateDevice(t *testing.T) {
-	ctrl := gomock.NewController(t)
-	defer ctrl.Finish()
-
-	mockStorage := NewMockStorage(ctrl)
-	mockDatabus := NewMockDatabusProducer(ctrl)
-	service := NewService(mockStorage, mockDatabus)
-
 	tests := []TestCase{
 		{
 			name: "Device created and published",
 			setup: func(storage *MockStorage, databus *MockDatabusProducer) {
+				storage.EXPECT().GetDeviceBySerial(gomock.Any(), "serial").Return(nil, nil)
 				storage.EXPECT().AddDevice(gomock.Any(), "type", "serial", "status").Return(&entity.Device{DeviceID: "1"}, nil)
 				databus.EXPECT().PublishDevice(gomock.Any(), &entity.Device{DeviceID: "1"}).Return(nil)
 			},
@@ -104,7 +98,22 @@ func TestService_CreateDevice(t *testing.T) {
 		{
 			name: "Storage returns error",
 			setup: func(storage *MockStorage, databus *MockDatabusProducer) {
+				storage.EXPECT().GetDeviceBySerial(gomock.Any(), "serial").Return(nil, nil)
 				storage.EXPECT().AddDevice(gomock.Any(), "type", "serial", "status").Return(nil, errors.New("some error"))
+			},
+			execute: func(s *Service) error {
+				_, err := s.CreateDevice(context.Background(), "type", "serial", "status")
+				return err
+			},
+			check: func(t *testing.T, err error) {
+				assert.Error(t, err)
+			},
+		},
+		{
+			name: "Device already exists by serial number",
+			setup: func(storage *MockStorage, databus *MockDatabusProducer) {
+				existedDevice := &entity.Device{DeviceID: "1"}
+				storage.EXPECT().GetDeviceBySerial(gomock.Any(), "serial").Return(existedDevice, nil)
 			},
 			execute: func(s *Service) error {
 				_, err := s.CreateDevice(context.Background(), "type", "serial", "status")
@@ -117,6 +126,7 @@ func TestService_CreateDevice(t *testing.T) {
 		{
 			name: "Publish returns error",
 			setup: func(storage *MockStorage, databus *MockDatabusProducer) {
+				storage.EXPECT().GetDeviceBySerial(gomock.Any(), "serial").Return(nil, nil)
 				storage.EXPECT().AddDevice(gomock.Any(), "type", "serial", "status").Return(&entity.Device{DeviceID: "1"}, nil)
 				databus.EXPECT().PublishDevice(gomock.Any(), &entity.Device{DeviceID: "1"}).Return(errors.New("publish error"))
 			},
@@ -132,6 +142,13 @@ func TestService_CreateDevice(t *testing.T) {
 
 	for _, tc := range tests {
 		t.Run(tc.name, func(t *testing.T) {
+			ctrl := gomock.NewController(t)
+			defer ctrl.Finish()
+
+			mockStorage := NewMockStorage(ctrl)
+			mockDatabus := NewMockDatabusProducer(ctrl)
+			service := NewService(mockStorage, mockDatabus)
+
 			tc.setup(mockStorage, mockDatabus)
 			err := tc.execute(service)
 			tc.check(t, err)
