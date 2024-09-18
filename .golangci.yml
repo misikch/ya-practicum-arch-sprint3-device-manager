@@ -14,4 +14,4 @@ issues:
 
 linters-settings:
   goimports:
-    local-prefixes: github.com/misikch/ya-practicum-arch-sprint3-telemetry
+    local-prefixes: github.com/misikch/ya-practicum-arch-sprint3-device-manager

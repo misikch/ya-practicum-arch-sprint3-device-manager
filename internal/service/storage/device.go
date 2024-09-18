@@ -5,10 +5,10 @@ import (
 	"errors"
 
 	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 
 	"device-manager/internal/entity"
-	"go.mongodb.org/mongo-driver/bson"
 )
 
 // GetDevice получает информацию об устройстве по его device_id.

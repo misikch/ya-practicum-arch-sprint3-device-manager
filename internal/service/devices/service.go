@@ -43,10 +43,11 @@ func (s *Service) CreateDevice(ctx context.Context, deviceType string, serialNum
 	if err != nil {
 		return nil, err
 	}
+
 	if device != nil {
 		return nil, ErrDeviceWithSerialAlreadyExists
 	}
-	
+
 	device, err = s.storage.AddDevice(ctx, deviceType, serialNumber, status)
 	if err != nil {
 		return device, err
