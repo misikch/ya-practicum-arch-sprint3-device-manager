@@ -24,25 +24,31 @@ import (
 type Invoker interface {
 	// DevicesDeviceIDCommandsPost invokes POST /devices/{device_id}/commands operation.
 	//
-	// Отправляет команду устройству (например, «установить
-	// температуру 22 градуса»).
+	// Отправляет команду устройству (например "открыть
+	// ворота").
 	//
 	// POST /devices/{device_id}/commands
-	DevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (*DevicesDeviceIDCommandsPostOK, error)
+	DevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (DevicesDeviceIDCommandsPostRes, error)
 	// DevicesDeviceIDGet invokes GET /devices/{device_id} operation.
 	//
 	// Возвращает подробную информацию о конкретном
 	// устройстве по его ID.
 	//
 	// GET /devices/{device_id}
-	DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (*DevicesDeviceIDGetOK, error)
+	DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (DevicesDeviceIDGetRes, error)
 	// DevicesDeviceIDStatusPut invokes PUT /devices/{device_id}/status operation.
 	//
 	// Позволяет изменить состояние устройства (например,
 	// включить/выключить).
 	//
 	// PUT /devices/{device_id}/status
-	DevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (*DevicesDeviceIDStatusPutOK, error)
+	DevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (DevicesDeviceIDStatusPutRes, error)
+	// DevicesPost invokes POST /devices operation.
+	//
+	// Добавляет новое устройство.
+	//
+	// POST /devices
+	DevicesPost(ctx context.Context, request *DevicesPostReq) (DevicesPostRes, error)
 }
 
 // Client implements OAS client.
@@ -95,16 +101,16 @@ func (c *Client) requestURL(ctx context.Context) *url.URL {
 
 // DevicesDeviceIDCommandsPost invokes POST /devices/{device_id}/commands operation.
 //
-// Отправляет команду устройству (например, «установить
-// температуру 22 градуса»).
+// Отправляет команду устройству (например "открыть
+// ворота").
 //
 // POST /devices/{device_id}/commands
-func (c *Client) DevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (*DevicesDeviceIDCommandsPostOK, error) {
+func (c *Client) DevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (DevicesDeviceIDCommandsPostRes, error) {
 	res, err := c.sendDevicesDeviceIDCommandsPost(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendDevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (res *DevicesDeviceIDCommandsPostOK, err error) {
+func (c *Client) sendDevicesDeviceIDCommandsPost(ctx context.Context, request *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (res DevicesDeviceIDCommandsPostRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPRequestMethodKey.String("POST"),
 		semconv.HTTPRouteKey.String("/devices/{device_id}/commands"),
@@ -193,12 +199,12 @@ func (c *Client) sendDevicesDeviceIDCommandsPost(ctx context.Context, request *D
 // устройстве по его ID.
 //
 // GET /devices/{device_id}
-func (c *Client) DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (*DevicesDeviceIDGetOK, error) {
+func (c *Client) DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (DevicesDeviceIDGetRes, error) {
 	res, err := c.sendDevicesDeviceIDGet(ctx, params)
 	return res, err
 }
 
-func (c *Client) sendDevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (res *DevicesDeviceIDGetOK, err error) {
+func (c *Client) sendDevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (res DevicesDeviceIDGetRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPRequestMethodKey.String("GET"),
 		semconv.HTTPRouteKey.String("/devices/{device_id}"),
@@ -283,12 +289,12 @@ func (c *Client) sendDevicesDeviceIDGet(ctx context.Context, params DevicesDevic
 // включить/выключить).
 //
 // PUT /devices/{device_id}/status
-func (c *Client) DevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (*DevicesDeviceIDStatusPutOK, error) {
+func (c *Client) DevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (DevicesDeviceIDStatusPutRes, error) {
 	res, err := c.sendDevicesDeviceIDStatusPut(ctx, request, params)
 	return res, err
 }
 
-func (c *Client) sendDevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (res *DevicesDeviceIDStatusPutOK, err error) {
+func (c *Client) sendDevicesDeviceIDStatusPut(ctx context.Context, request *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (res DevicesDeviceIDStatusPutRes, err error) {
 	otelAttrs := []attribute.KeyValue{
 		semconv.HTTPRequestMethodKey.String("PUT"),
 		semconv.HTTPRouteKey.String("/devices/{device_id}/status"),
@@ -364,6 +370,80 @@ func (c *Client) sendDevicesDeviceIDStatusPut(ctx context.Context, request *Devi
 
 	stage = "DecodeResponse"
 	result, err := decodeDevicesDeviceIDStatusPutResponse(resp)
+	if err != nil {
+		return res, errors.Wrap(err, "decode response")
+	}
+
+	return result, nil
+}
+
+// DevicesPost invokes POST /devices operation.
+//
+// Добавляет новое устройство.
+//
+// POST /devices
+func (c *Client) DevicesPost(ctx context.Context, request *DevicesPostReq) (DevicesPostRes, error) {
+	res, err := c.sendDevicesPost(ctx, request)
+	return res, err
+}
+
+func (c *Client) sendDevicesPost(ctx context.Context, request *DevicesPostReq) (res DevicesPostRes, err error) {
+	otelAttrs := []attribute.KeyValue{
+		semconv.HTTPRequestMethodKey.String("POST"),
+		semconv.HTTPRouteKey.String("/devices"),
+	}
+
+	// Run stopwatch.
+	startTime := time.Now()
+	defer func() {
+		// Use floating point division here for higher precision (instead of Millisecond method).
+		elapsedDuration := time.Since(startTime)
+		c.duration.Record(ctx, float64(float64(elapsedDuration)/float64(time.Millisecond)), metric.WithAttributes(otelAttrs...))
+	}()
+
+	// Increment request counter.
+	c.requests.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+
+	// Start a span for this request.
+	ctx, span := c.cfg.Tracer.Start(ctx, "DevicesPost",
+		trace.WithAttributes(otelAttrs...),
+		clientSpanKind,
+	)
+	// Track stage for error reporting.
+	var stage string
+	defer func() {
+		if err != nil {
+			span.RecordError(err)
+			span.SetStatus(codes.Error, stage)
+			c.errors.Add(ctx, 1, metric.WithAttributes(otelAttrs...))
+		}
+		span.End()
+	}()
+
+	stage = "BuildURL"
+	u := uri.Clone(c.requestURL(ctx))
+	var pathParts [1]string
+	pathParts[0] = "/devices"
+	uri.AddPathParts(u, pathParts[:]...)
+
+	stage = "EncodeRequest"
+	r, err := ht.NewRequest(ctx, "POST", u)
+	if err != nil {
+		return res, errors.Wrap(err, "create request")
+	}
+	if err := encodeDevicesPostRequest(request, r); err != nil {
+		return res, errors.Wrap(err, "encode request")
+	}
+
+	stage = "SendRequest"
+	resp, err := c.cfg.Client.Do(r)
+	if err != nil {
+		return res, errors.Wrap(err, "do request")
+	}
+	defer resp.Body.Close()
+
+	stage = "DecodeResponse"
+	result, err := decodeDevicesPostResponse(resp)
 	if err != nil {
 		return res, errors.Wrap(err, "decode response")
 	}

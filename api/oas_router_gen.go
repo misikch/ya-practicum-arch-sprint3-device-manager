@@ -49,31 +49,20 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/devices/"
+		case '/': // Prefix: "/devices"
 			origElem := elem
-			if l := len("/devices/"); len(elem) >= l && elem[0:l] == "/devices/" {
+			if l := len("/devices"); len(elem) >= l && elem[0:l] == "/devices" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
-			// Param: "device_id"
-			// Match until "/"
-			idx := strings.IndexByte(elem, '/')
-			if idx < 0 {
-				idx = len(elem)
-			}
-			args[0] = elem[:idx]
-			elem = elem[idx:]
-
 			if len(elem) == 0 {
 				switch r.Method {
-				case "GET":
-					s.handleDevicesDeviceIDGetRequest([1]string{
-						args[0],
-					}, elemIsEscaped, w, r)
+				case "POST":
+					s.handleDevicesPostRequest([0]string{}, elemIsEscaped, w, r)
 				default:
-					s.notAllowed(w, r, "GET")
+					s.notAllowed(w, r, "POST")
 				}
 
 				return
@@ -87,53 +76,86 @@ func (s *Server) ServeHTTP(w http.ResponseWriter, r *http.Request) {
 					break
 				}
 
+				// Param: "device_id"
+				// Match until "/"
+				idx := strings.IndexByte(elem, '/')
+				if idx < 0 {
+					idx = len(elem)
+				}
+				args[0] = elem[:idx]
+				elem = elem[idx:]
+
 				if len(elem) == 0 {
-					break
+					switch r.Method {
+					case "GET":
+						s.handleDevicesDeviceIDGetRequest([1]string{
+							args[0],
+						}, elemIsEscaped, w, r)
+					default:
+						s.notAllowed(w, r, "GET")
+					}
+
+					return
 				}
 				switch elem[0] {
-				case 'c': // Prefix: "commands"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("commands"); len(elem) >= l && elem[0:l] == "commands" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "POST":
-							s.handleDevicesDeviceIDCommandsPostRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "POST")
-						}
-
-						return
-					}
-
-					elem = origElem
-				case 's': // Prefix: "status"
-					origElem := elem
-					if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
-						elem = elem[l:]
-					} else {
 						break
 					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch r.Method {
-						case "PUT":
-							s.handleDevicesDeviceIDStatusPutRequest([1]string{
-								args[0],
-							}, elemIsEscaped, w, r)
-						default:
-							s.notAllowed(w, r, "PUT")
+					switch elem[0] {
+					case 'c': // Prefix: "commands"
+						origElem := elem
+						if l := len("commands"); len(elem) >= l && elem[0:l] == "commands" {
+							elem = elem[l:]
+						} else {
+							break
 						}
 
-						return
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "POST":
+								s.handleDevicesDeviceIDCommandsPostRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "POST")
+							}
+
+							return
+						}
+
+						elem = origElem
+					case 's': // Prefix: "status"
+						origElem := elem
+						if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch r.Method {
+							case "PUT":
+								s.handleDevicesDeviceIDStatusPutRequest([1]string{
+									args[0],
+								}, elemIsEscaped, w, r)
+							default:
+								s.notAllowed(w, r, "PUT")
+							}
+
+							return
+						}
+
+						elem = origElem
 					}
 
 					elem = origElem
@@ -223,32 +245,23 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 			break
 		}
 		switch elem[0] {
-		case '/': // Prefix: "/devices/"
+		case '/': // Prefix: "/devices"
 			origElem := elem
-			if l := len("/devices/"); len(elem) >= l && elem[0:l] == "/devices/" {
+			if l := len("/devices"); len(elem) >= l && elem[0:l] == "/devices" {
 				elem = elem[l:]
 			} else {
 				break
 			}
 
-			// Param: "device_id"
-			// Match until "/"
-			idx := strings.IndexByte(elem, '/')
-			if idx < 0 {
-				idx = len(elem)
-			}
-			args[0] = elem[:idx]
-			elem = elem[idx:]
-
 			if len(elem) == 0 {
 				switch method {
-				case "GET":
-					r.name = "DevicesDeviceIDGet"
-					r.summary = "Получение информации об устройстве"
+				case "POST":
+					r.name = "DevicesPost"
+					r.summary = "Добавление устройства"
 					r.operationID = ""
-					r.pathPattern = "/devices/{device_id}"
+					r.pathPattern = "/devices"
 					r.args = args
-					r.count = 1
+					r.count = 0
 					return r, true
 				default:
 					return
@@ -263,57 +276,92 @@ func (s *Server) FindPath(method string, u *url.URL) (r Route, _ bool) {
 					break
 				}
 
+				// Param: "device_id"
+				// Match until "/"
+				idx := strings.IndexByte(elem, '/')
+				if idx < 0 {
+					idx = len(elem)
+				}
+				args[0] = elem[:idx]
+				elem = elem[idx:]
+
 				if len(elem) == 0 {
-					break
+					switch method {
+					case "GET":
+						r.name = "DevicesDeviceIDGet"
+						r.summary = "Получение информации об устройстве"
+						r.operationID = ""
+						r.pathPattern = "/devices/{device_id}"
+						r.args = args
+						r.count = 1
+						return r, true
+					default:
+						return
+					}
 				}
 				switch elem[0] {
-				case 'c': // Prefix: "commands"
+				case '/': // Prefix: "/"
 					origElem := elem
-					if l := len("commands"); len(elem) >= l && elem[0:l] == "commands" {
+					if l := len("/"); len(elem) >= l && elem[0:l] == "/" {
 						elem = elem[l:]
 					} else {
 						break
 					}
 
 					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "POST":
-							r.name = "DevicesDeviceIDCommandsPost"
-							r.summary = "Отправка команды устройству"
-							r.operationID = ""
-							r.pathPattern = "/devices/{device_id}/commands"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
-						}
-					}
-
-					elem = origElem
-				case 's': // Prefix: "status"
-					origElem := elem
-					if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
-						elem = elem[l:]
-					} else {
 						break
 					}
-
-					if len(elem) == 0 {
-						// Leaf node.
-						switch method {
-						case "PUT":
-							r.name = "DevicesDeviceIDStatusPut"
-							r.summary = "Обновление состояния устройства"
-							r.operationID = ""
-							r.pathPattern = "/devices/{device_id}/status"
-							r.args = args
-							r.count = 1
-							return r, true
-						default:
-							return
+					switch elem[0] {
+					case 'c': // Prefix: "commands"
+						origElem := elem
+						if l := len("commands"); len(elem) >= l && elem[0:l] == "commands" {
+							elem = elem[l:]
+						} else {
+							break
 						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "POST":
+								r.name = "DevicesDeviceIDCommandsPost"
+								r.summary = "Отправка команды устройству"
+								r.operationID = ""
+								r.pathPattern = "/devices/{device_id}/commands"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
+						elem = origElem
+					case 's': // Prefix: "status"
+						origElem := elem
+						if l := len("status"); len(elem) >= l && elem[0:l] == "status" {
+							elem = elem[l:]
+						} else {
+							break
+						}
+
+						if len(elem) == 0 {
+							// Leaf node.
+							switch method {
+							case "PUT":
+								r.name = "DevicesDeviceIDStatusPut"
+								r.summary = "Обновление состояния устройства"
+								r.operationID = ""
+								r.pathPattern = "/devices/{device_id}/status"
+								r.args = args
+								r.count = 1
+								return r, true
+							default:
+								return
+							}
+						}
+
+						elem = origElem
 					}
 
 					elem = origElem

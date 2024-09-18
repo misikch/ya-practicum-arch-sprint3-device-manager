@@ -2,6 +2,28 @@ openapi: 3.0.0
 info:
   title: API управления устройствами
   version: 1.0.0
+
+components:
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        code:
+          type: integer
+        message:
+          type: string
+    Device:
+      type: object
+      properties:
+        device_id:
+          type: string
+        deviceType:
+          type: string
+        serialNumber:
+          type: string
+        status:
+          type: string
+
 paths:
   /devices/{device_id}:
     get:
@@ -19,14 +41,19 @@ paths:
           content:
             application/json:
               schema:
-                type: object
-                properties:
-                  device_id:
-                    type: string
-                  name:
-                    type: string
-                  status:
-                    type: string
+                $ref: '#/components/schemas/Device'
+        '404':
+          description: Устройство не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /devices/{device_id}/status:
     put:
@@ -57,11 +84,23 @@ paths:
                 properties:
                   status:
                     type: string
+        '404':
+          description: Устройство не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
 
   /devices/{device_id}/commands:
     post:
       summary: Отправка команды устройству
-      description: Отправляет команду устройству (например, «установить температуру 22 градуса»).
+      description: Отправляет команду устройству (например "открыть ворота").
       parameters:
         - name: device_id
           in: path
@@ -89,3 +128,46 @@ paths:
                 properties:
                   result:
                     type: string
+        '404':
+          description: Устройство не найдено
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
+
+  /devices:
+    post:
+      summary: Добавление устройства
+      description: Добавляет новое устройство.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                deviceType:
+                  type: string
+                serialNumber:
+                  type: string
+                status:
+                  type: string
+      responses:
+        '200':
+          description: Успешный ответ
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Device'
+        '500':
+          description: Внутренняя ошибка сервера
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'

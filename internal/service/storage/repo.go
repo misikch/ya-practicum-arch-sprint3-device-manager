@@ -1,57 +1,26 @@
 package storage
 
 import (
-	"context"
-	"github.com/jmoiron/sqlx"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.uber.org/zap"
 )
 
 type Storage struct {
-	db     *sqlx.DB
-	logger Log
+	client *mongo.Client
+	logger *zap.SugaredLogger
+	dbName string
 }
 
-func New(db *sqlx.DB, logger Log) *Storage {
+// New создаёт новый экземпляр хранилища (Storage) с использованием MongoDB.
+func New(client *mongo.Client, logger *zap.SugaredLogger, dbName string) *Storage {
 	return &Storage{
-		db:     db,
+		client: client,
 		logger: logger,
+		dbName: dbName,
 	}
 }
 
-func (s *Storage) SetDeviceStatus(ctx context.Context, deviceUUID string, status string, author string) (err error) {
-	tx, err := s.db.BeginTxx(ctx, nil)
-	if err != nil {
-		return
-	}
-
-	defer func() {
-		if p := recover(); p != nil {
-			rollbackErr := tx.Rollback()
-			if err != nil {
-				s.logger.Error("recovered: failed to rollback transaction", rollbackErr)
-			}
-		} else if err != nil {
-			rollbackErr := tx.Rollback()
-			if err != nil {
-				s.logger.Error("failed to rollback transaction", rollbackErr)
-			}
-		} else {
-			err = tx.Commit()
-		}
-	}()
-
-	// Обновление статуса устройства
-	_, err = tx.ExecContext(ctx, "UPDATE devices SET status = ?, updated_at = NOW() WHERE uuid = ?", status, deviceUUID)
-	if err != nil {
-		return err
-	}
-
-	// Логирование изменения статуса
-	_, err = tx.ExecContext(ctx,
-		"INSERT INTO device_status_log (device_uuid, status, author, changed_at) VALUES (?, ?, ?, NOW())",
-		deviceUUID, status, author)
-	if err != nil {
-		return
-	}
-
-	return
+// Database предоставляет доступ к базе данных MongoDB.
+func (s *Storage) Database() *mongo.Database {
+	return s.client.Database(s.dbName)
 }

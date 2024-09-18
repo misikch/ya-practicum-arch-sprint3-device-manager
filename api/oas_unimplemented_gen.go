@@ -15,11 +15,11 @@ var _ Handler = UnimplementedHandler{}
 
 // DevicesDeviceIDCommandsPost implements POST /devices/{device_id}/commands operation.
 //
-// Отправляет команду устройству (например, «установить
-// температуру 22 градуса»).
+// Отправляет команду устройству (например "открыть
+// ворота").
 //
 // POST /devices/{device_id}/commands
-func (UnimplementedHandler) DevicesDeviceIDCommandsPost(ctx context.Context, req *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (r *DevicesDeviceIDCommandsPostOK, _ error) {
+func (UnimplementedHandler) DevicesDeviceIDCommandsPost(ctx context.Context, req *DevicesDeviceIDCommandsPostReq, params DevicesDeviceIDCommandsPostParams) (r DevicesDeviceIDCommandsPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -29,7 +29,7 @@ func (UnimplementedHandler) DevicesDeviceIDCommandsPost(ctx context.Context, req
 // устройстве по его ID.
 //
 // GET /devices/{device_id}
-func (UnimplementedHandler) DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (r *DevicesDeviceIDGetOK, _ error) {
+func (UnimplementedHandler) DevicesDeviceIDGet(ctx context.Context, params DevicesDeviceIDGetParams) (r DevicesDeviceIDGetRes, _ error) {
 	return r, ht.ErrNotImplemented
 }
 
@@ -39,6 +39,15 @@ func (UnimplementedHandler) DevicesDeviceIDGet(ctx context.Context, params Devic
 // включить/выключить).
 //
 // PUT /devices/{device_id}/status
-func (UnimplementedHandler) DevicesDeviceIDStatusPut(ctx context.Context, req *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (r *DevicesDeviceIDStatusPutOK, _ error) {
+func (UnimplementedHandler) DevicesDeviceIDStatusPut(ctx context.Context, req *DevicesDeviceIDStatusPutReq, params DevicesDeviceIDStatusPutParams) (r DevicesDeviceIDStatusPutRes, _ error) {
+	return r, ht.ErrNotImplemented
+}
+
+// DevicesPost implements POST /devices operation.
+//
+// Добавляет новое устройство.
+//
+// POST /devices
+func (UnimplementedHandler) DevicesPost(ctx context.Context, req *DevicesPostReq) (r DevicesPostRes, _ error) {
 	return r, ht.ErrNotImplemented
 }

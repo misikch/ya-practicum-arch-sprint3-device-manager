@@ -2,6 +2,65 @@
 
 package api
 
+// Ref: #/components/schemas/Device
+type Device struct {
+	DeviceID     OptString `json:"device_id"`
+	DeviceType   OptString `json:"deviceType"`
+	SerialNumber OptString `json:"serialNumber"`
+	Status       OptString `json:"status"`
+}
+
+// GetDeviceID returns the value of DeviceID.
+func (s *Device) GetDeviceID() OptString {
+	return s.DeviceID
+}
+
+// GetDeviceType returns the value of DeviceType.
+func (s *Device) GetDeviceType() OptString {
+	return s.DeviceType
+}
+
+// GetSerialNumber returns the value of SerialNumber.
+func (s *Device) GetSerialNumber() OptString {
+	return s.SerialNumber
+}
+
+// GetStatus returns the value of Status.
+func (s *Device) GetStatus() OptString {
+	return s.Status
+}
+
+// SetDeviceID sets the value of DeviceID.
+func (s *Device) SetDeviceID(val OptString) {
+	s.DeviceID = val
+}
+
+// SetDeviceType sets the value of DeviceType.
+func (s *Device) SetDeviceType(val OptString) {
+	s.DeviceType = val
+}
+
+// SetSerialNumber sets the value of SerialNumber.
+func (s *Device) SetSerialNumber(val OptString) {
+	s.SerialNumber = val
+}
+
+// SetStatus sets the value of Status.
+func (s *Device) SetStatus(val OptString) {
+	s.Status = val
+}
+
+func (*Device) devicesDeviceIDGetRes() {}
+func (*Device) devicesPostRes()        {}
+
+type DevicesDeviceIDCommandsPostInternalServerError ErrorResponse
+
+func (*DevicesDeviceIDCommandsPostInternalServerError) devicesDeviceIDCommandsPostRes() {}
+
+type DevicesDeviceIDCommandsPostNotFound ErrorResponse
+
+func (*DevicesDeviceIDCommandsPostNotFound) devicesDeviceIDCommandsPostRes() {}
+
 type DevicesDeviceIDCommandsPostOK struct {
 	Result OptString `json:"result"`
 }
@@ -15,6 +74,8 @@ func (s *DevicesDeviceIDCommandsPostOK) GetResult() OptString {
 func (s *DevicesDeviceIDCommandsPostOK) SetResult(val OptString) {
 	s.Result = val
 }
+
+func (*DevicesDeviceIDCommandsPostOK) devicesDeviceIDCommandsPostRes() {}
 
 type DevicesDeviceIDCommandsPostReq struct {
 	Command OptString `json:"command"`
@@ -41,41 +102,21 @@ func (s *DevicesDeviceIDCommandsPostReq) SetValue(val OptString) {
 	s.Value = val
 }
 
-type DevicesDeviceIDGetOK struct {
-	DeviceID OptString `json:"device_id"`
-	Name     OptString `json:"name"`
-	Status   OptString `json:"status"`
-}
+type DevicesDeviceIDGetInternalServerError ErrorResponse
 
-// GetDeviceID returns the value of DeviceID.
-func (s *DevicesDeviceIDGetOK) GetDeviceID() OptString {
-	return s.DeviceID
-}
+func (*DevicesDeviceIDGetInternalServerError) devicesDeviceIDGetRes() {}
 
-// GetName returns the value of Name.
-func (s *DevicesDeviceIDGetOK) GetName() OptString {
-	return s.Name
-}
+type DevicesDeviceIDGetNotFound ErrorResponse
 
-// GetStatus returns the value of Status.
-func (s *DevicesDeviceIDGetOK) GetStatus() OptString {
-	return s.Status
-}
+func (*DevicesDeviceIDGetNotFound) devicesDeviceIDGetRes() {}
 
-// SetDeviceID sets the value of DeviceID.
-func (s *DevicesDeviceIDGetOK) SetDeviceID(val OptString) {
-	s.DeviceID = val
-}
+type DevicesDeviceIDStatusPutInternalServerError ErrorResponse
 
-// SetName sets the value of Name.
-func (s *DevicesDeviceIDGetOK) SetName(val OptString) {
-	s.Name = val
-}
+func (*DevicesDeviceIDStatusPutInternalServerError) devicesDeviceIDStatusPutRes() {}
 
-// SetStatus sets the value of Status.
-func (s *DevicesDeviceIDGetOK) SetStatus(val OptString) {
-	s.Status = val
-}
+type DevicesDeviceIDStatusPutNotFound ErrorResponse
+
+func (*DevicesDeviceIDStatusPutNotFound) devicesDeviceIDStatusPutRes() {}
 
 type DevicesDeviceIDStatusPutOK struct {
 	Status OptString `json:"status"`
@@ -91,6 +132,8 @@ func (s *DevicesDeviceIDStatusPutOK) SetStatus(val OptString) {
 	s.Status = val
 }
 
+func (*DevicesDeviceIDStatusPutOK) devicesDeviceIDStatusPutRes() {}
+
 type DevicesDeviceIDStatusPutReq struct {
 	Status OptString `json:"status"`
 }
@@ -103,6 +146,116 @@ func (s *DevicesDeviceIDStatusPutReq) GetStatus() OptString {
 // SetStatus sets the value of Status.
 func (s *DevicesDeviceIDStatusPutReq) SetStatus(val OptString) {
 	s.Status = val
+}
+
+type DevicesPostReq struct {
+	DeviceType   OptString `json:"deviceType"`
+	SerialNumber OptString `json:"serialNumber"`
+	Status       OptString `json:"status"`
+}
+
+// GetDeviceType returns the value of DeviceType.
+func (s *DevicesPostReq) GetDeviceType() OptString {
+	return s.DeviceType
+}
+
+// GetSerialNumber returns the value of SerialNumber.
+func (s *DevicesPostReq) GetSerialNumber() OptString {
+	return s.SerialNumber
+}
+
+// GetStatus returns the value of Status.
+func (s *DevicesPostReq) GetStatus() OptString {
+	return s.Status
+}
+
+// SetDeviceType sets the value of DeviceType.
+func (s *DevicesPostReq) SetDeviceType(val OptString) {
+	s.DeviceType = val
+}
+
+// SetSerialNumber sets the value of SerialNumber.
+func (s *DevicesPostReq) SetSerialNumber(val OptString) {
+	s.SerialNumber = val
+}
+
+// SetStatus sets the value of Status.
+func (s *DevicesPostReq) SetStatus(val OptString) {
+	s.Status = val
+}
+
+// Ref: #/components/schemas/ErrorResponse
+type ErrorResponse struct {
+	Code    OptInt    `json:"code"`
+	Message OptString `json:"message"`
+}
+
+// GetCode returns the value of Code.
+func (s *ErrorResponse) GetCode() OptInt {
+	return s.Code
+}
+
+// GetMessage returns the value of Message.
+func (s *ErrorResponse) GetMessage() OptString {
+	return s.Message
+}
+
+// SetCode sets the value of Code.
+func (s *ErrorResponse) SetCode(val OptInt) {
+	s.Code = val
+}
+
+// SetMessage sets the value of Message.
+func (s *ErrorResponse) SetMessage(val OptString) {
+	s.Message = val
+}
+
+func (*ErrorResponse) devicesPostRes() {}
+
+// NewOptInt returns new OptInt with value set to v.
+func NewOptInt(v int) OptInt {
+	return OptInt{
+		Value: v,
+		Set:   true,
+	}
+}
+
+// OptInt is optional int.
+type OptInt struct {
+	Value int
+	Set   bool
+}
+
+// IsSet returns true if OptInt was set.
+func (o OptInt) IsSet() bool { return o.Set }
+
+// Reset unsets value.
+func (o *OptInt) Reset() {
+	var v int
+	o.Value = v
+	o.Set = false
+}
+
+// SetTo sets value to v.
+func (o *OptInt) SetTo(v int) {
+	o.Set = true
+	o.Value = v
+}
+
+// Get returns value and boolean that denotes whether value was set.
+func (o OptInt) Get() (v int, ok bool) {
+	if !o.Set {
+		return v, false
+	}
+	return o.Value, true
+}
+
+// Or returns value if set, or given parameter if does not.
+func (o OptInt) Or(d int) int {
+	if v, ok := o.Get(); ok {
+		return v
+	}
+	return d
 }
 
 // NewOptString returns new OptString with value set to v.

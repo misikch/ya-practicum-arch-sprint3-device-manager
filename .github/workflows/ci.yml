@@ -1,0 +1,60 @@
+name: Go CI
+
+on:
+  push:
+    branches:
+      - '**'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Go
+        uses: actions/setup-go@v5
+        with:
+          go-version: 1.22 # используйте вашу версию Go
+
+      - name: Install dependencies
+        run: go mod download
+
+      - name: Install go.uber.mockgen
+        run: go install go.uber.org/mock/mockgen@v0.4.0
+
+      - name: Run go generate
+        run: go generate ./...
+
+      - name: Install golangci-lint
+        run: |
+          curl -sSfL https://raw.githubusercontent.com/golangci/golangci-lint/master/install.sh | sh -s -- -b $(go env GOPATH)/bin v1.54.2
+
+      - name: Run golangci-lint
+        run: golangci-lint run
+
+      - name: Run tests
+        run: go test ./...
+
+      - name: Build service
+        run: go build -o ./build/service ./cmd/service/main.go
+
+
+  docker:
+    needs: build
+    runs-on: ubuntu-latest
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Build Docker image
+        run: docker build . -t misikch/ya-practicum-arch-sprint3-device-manager:latest
+
+      - name: Log in to Docker Hub
+        run: echo "${{ secrets.DOCKERHUB_PASSWORD }}" | docker login -u "${{ secrets.DOCKERHUB_USERNAME }}" --password-stdin
+
+      - name: Push Docker image
+        run: docker push misikch/ya-practicum-arch-sprint3-device-manager:latest
