@@ -148,6 +148,14 @@ func (s *DevicesDeviceIDStatusPutReq) SetStatus(val OptString) {
 	s.Status = val
 }
 
+type DevicesPostConflict ErrorResponse
+
+func (*DevicesPostConflict) devicesPostRes() {}
+
+type DevicesPostInternalServerError ErrorResponse
+
+func (*DevicesPostInternalServerError) devicesPostRes() {}
+
 type DevicesPostReq struct {
 	DeviceType   OptString `json:"deviceType"`
 	SerialNumber OptString `json:"serialNumber"`
@@ -209,8 +217,6 @@ func (s *ErrorResponse) SetCode(val OptInt) {
 func (s *ErrorResponse) SetMessage(val OptString) {
 	s.Message = val
 }
-
-func (*ErrorResponse) devicesPostRes() {}
 
 // NewOptInt returns new OptInt with value set to v.
 func NewOptInt(v int) OptInt {

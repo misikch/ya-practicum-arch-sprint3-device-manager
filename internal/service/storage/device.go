@@ -2,6 +2,10 @@ package storage
 
 import (
 	"context"
+	"errors"
+
+	"github.com/google/uuid"
+	"go.mongodb.org/mongo-driver/mongo"
 
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/bson/primitive"
@@ -15,7 +19,29 @@ func (s *Storage) GetDevice(ctx context.Context, deviceID string) (*entity.Devic
 	var device entity.Device
 	err := collection.FindOne(ctx, bson.M{"device_id": deviceID}).Decode(&device)
 	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+
 		s.logger.Errorf("Ошибка при получении устройства: %v", err)
+
+		return nil, err
+	}
+
+	return &device, nil
+}
+
+// GetDeviceBySerial получает информацию об устройстве по его serial_number.
+func (s *Storage) GetDeviceBySerial(ctx context.Context, serialNumber string) (*entity.Device, error) {
+	collection := s.Database().Collection("devices")
+	var device entity.Device
+	err := collection.FindOne(ctx, bson.M{"serial_number": serialNumber}).Decode(&device)
+	if err != nil {
+		if errors.Is(err, mongo.ErrNoDocuments) {
+			return nil, nil
+		}
+
+		s.logger.Errorf("failed to get defice by serial %q: %v", serialNumber, err)
 
 		return nil, err
 	}
@@ -60,11 +86,14 @@ func (s *Storage) LogCommandToDevice(ctx context.Context, deviceID string, comma
 // AddDevice добавляет новое устройство.
 func (s *Storage) AddDevice(ctx context.Context, deviceType string, serialNumber string, status string) (*entity.Device, error) {
 	collection := s.Database().Collection("devices")
+
 	device := entity.Device{
+		DeviceID:     uuid.New().String(), // Проставляем uuid
 		DeviceType:   deviceType,
 		SerialNumber: serialNumber,
 		Status:       status,
 	}
+
 	res, err := collection.InsertOne(ctx, device)
 	if err != nil {
 		s.logger.Errorf("Ошибка при добавлении устройства: %v", err)

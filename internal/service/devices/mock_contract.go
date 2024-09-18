@@ -70,6 +70,21 @@ func (mr *MockStorageMockRecorder) GetDevice(ctx, deviceID any) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDevice", reflect.TypeOf((*MockStorage)(nil).GetDevice), ctx, deviceID)
 }
 
+// GetDeviceBySerial mocks base method.
+func (m *MockStorage) GetDeviceBySerial(ctx context.Context, serialNumber string) (*entity.Device, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "GetDeviceBySerial", ctx, serialNumber)
+	ret0, _ := ret[0].(*entity.Device)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetDeviceBySerial indicates an expected call of GetDeviceBySerial.
+func (mr *MockStorageMockRecorder) GetDeviceBySerial(ctx, serialNumber any) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetDeviceBySerial", reflect.TypeOf((*MockStorage)(nil).GetDeviceBySerial), ctx, serialNumber)
+}
+
 // LogCommandToDevice mocks base method.
 func (m *MockStorage) LogCommandToDevice(ctx context.Context, deviceID, command, value string) error {
 	m.ctrl.T.Helper()

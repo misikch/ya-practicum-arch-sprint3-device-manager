@@ -165,6 +165,12 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/Device'
+        '409':
+          description: Устройство с таким serial number уже существует
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ErrorResponse'
         '500':
           description: Внутренняя ошибка сервера
           content:

@@ -13,7 +13,8 @@ type Service struct {
 }
 
 var (
-	ErrDeviceNotFound = errors.New("device not found")
+	ErrDeviceNotFound                = errors.New("device not found")
+	ErrDeviceWithSerialAlreadyExists = errors.New("device with serial already exists")
 )
 
 func NewService(storage Storage, databus DatabusProducer) *Service {
@@ -37,7 +38,16 @@ func (s *Service) GetDeviceInfo(ctx context.Context, deviceID string) (entity.De
 }
 
 func (s *Service) CreateDevice(ctx context.Context, deviceType string, serialNumber string, status string) (*entity.Device, error) {
-	device, err := s.storage.AddDevice(ctx, deviceType, serialNumber, status)
+	//try to find existing device by serial
+	device, err := s.storage.GetDeviceBySerial(ctx, serialNumber)
+	if err != nil {
+		return nil, err
+	}
+	if device != nil {
+		return nil, ErrDeviceWithSerialAlreadyExists
+	}
+	
+	device, err = s.storage.AddDevice(ctx, deviceType, serialNumber, status)
 	if err != nil {
 		return device, err
 	}
