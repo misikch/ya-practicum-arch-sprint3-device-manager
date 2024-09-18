@@ -3,11 +3,11 @@ db.createUser({
     pwd: "mongopass",
     roles: [{
         role: "readWrite",
-        db: "telemetry"
+        db: "device-manager"
     }]
 });
 
-db = db.getSiblingDB('telemetry');
+db = db.getSiblingDB('device-manager');
 
 db.createCollection("devices");
 db.createCollection("commands_log");
